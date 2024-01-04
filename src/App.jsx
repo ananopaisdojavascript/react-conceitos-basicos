@@ -1,21 +1,68 @@
-import React from 'react';
-import { Fragment } from 'react';
-import './styles/Tailwind.css';
+import { Fragment, useState, useEffect } from 'react';
+import Header from "./components/Header"
+import Main from "./components/Main"
+import TextInput from "./components/TextInput"
+import DateInput from "./components/DateInput"
+import getAgeFrom from "./helpers/dateHelper"
+import getNewId from "./services/idService"
+import Timer from "./components/Timer"
+import CheckboxInput from "./components/CheckboxInput"
 
 export default function App() {
+  const [name, setName] = useState("")
+  const [birthDate, setBirthDate] = useState("1982-12-22")
+  const [showTimer, setShowTimer] = useState(false)
+
+  useEffect(() => {
+    document.title = name
+  }, [name])
+
+
+  function handleInputChange(newName) {
+    setName(newName)
+  }
+
+  function handleBirthDateChange(newDate) {
+    setBirthDate(newDate)
+  }
+
+  function toggleShowTimer() {
+    setShowTimer(currentShowTimer => !currentShowTimer)
+  }
+
   return (
     <Fragment>
-      <header>
-        <div className="bg-gray-100 mx-auto p-4">
-          <h1 className="text-center">Projeto Base</h1>
+      <Header size="text-xl">Projeto Base</Header>
+      <Main>
+        {
+          showTimer && <div className="text-right">
+          <Timer />
         </div>
-      </header>
+        }
+        
+        <CheckboxInput 
+          labelDescription="Mostrar timer"
+          onCheckboxChange={toggleShowTimer}
+        />
+        <TextInput
+          labelDescription="Digite um nome: "
+          inputValue={name}
+          onInputChange={handleInputChange}
+          labelName="name"
+          id={getNewId()}
+          autoFocus
+        />
 
-      <main>
-        <div className="container mx-auto p-4">
-          <h2>Conteúdo</h2>
-        </div>
-      </main>
+        <DateInput
+          labelDescription="Digite a data de nascimento:"
+          inputValue={birthDate}
+          onInputChange={handleBirthDateChange}
+          labelName="date"
+          id={getNewId()}
+        />
+
+        <p>O seu nome é {name}, que tem {name.length} caracteres, e você tem {getAgeFrom(birthDate)} anos.</p>
+      </Main>
     </Fragment>
   );
 }
